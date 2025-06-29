@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice History - Sadiq Abdullah Honda</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif; padding: 20px; background-color: #f8f8f8;
+    }
+    h1 {
+      color: #d8232a; text-align: center;
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;
+    }
+    .controls select, .controls input {
+      padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc; padding: 8px; font-size: 14px;
+      text-transform: uppercase;
+    }
+    th {
+      background-color: #d8232a; color: white;
+    }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .pagination {
+      margin-top: 20px; display: flex; justify-content: center; gap: 10px;
+    }
+    .pagination button {
+      padding: 6px 12px; font-size: 14px; cursor: pointer;
+    }
+    .no-data {
+      text-align: center; color: #888; margin-top: 20px;
+    }
+    .btn-download {
+      background: #d8232a; color: white; border: none; border-radius: 4px;
+      padding: 8px 16px; cursor: pointer; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Invoice History</h1>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search name, invoice no, or bike..." />
+    <select id="filterYear">
+      <option value="">All Years</option>
+    </select>
+    <select id="filterMonth">
+      <option value="">All Months</option>
+    </select>
+    <button class="btn-download" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+
+  <table id="invoiceTable">
+    <thead>
+      <tr>
+        <th>Invoice No</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Description</th>
+        <th>Tax %</th>
+        <th>Total</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr><td colspan="7" class="no-data">Loading...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button onclick="prevPage()">⟨ Prev</button>
+    <span id="pageInfo"></span>
+    <button onclick="nextPage()">Next ⟩</button>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://ggargmldunrnskbnpiaa.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnYXJnbWxkdW5ybnNrYm5waWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExODkzNDcsImV4cCI6MjA2Njc2NTM0N30.eYd4lVe9vMCSbJZJikpUamNO9P3vtvoct3sxM3ithbo'
+    );
+
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('search');
+    const filterYear = document.getElementById('filterYear');
+    const filterMonth = document.getElementById('filterMonth');
+    const pageInfo = document.getElementById('pageInfo');
+
+    let invoices = [];
+    let filteredInvoices = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    async function fetchInvoices() {
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .order('invoice_no', { ascending: false });
+
+      if (error) {
+        tableBody.innerHTML = `<tr><td colspan="7" class="no-data">❌ Error loading data</td></tr>`;
+        return;
+      }
+
+      invoices = data;
+      buildFilters();
+      applyFilters();
+    }
+
+    function buildFilters() {
+      const years = new Set();
+      const months = new Set();
+      invoices.forEach(inv => {
+        const date = new Date(inv.date);
+        years.add(date.getFullYear());
+        months.add(date.getMonth() + 1);
+      });
+
+      [...years].sort().forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y; opt.textContent = y;
+        filterYear.appendChild(opt);
+      });
+
+      [...months].sort((a, b) => a - b).forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.toString().padStart(2, '0');
+        opt.textContent = new Date(2000, m - 1, 1).toLocaleString('default', { month: 'long' });
+        filterMonth.appendChild(opt);
+      });
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.toLowerCase();
+      const year = filterYear.value;
+      const month = filterMonth.value;
+
+      filteredInvoices = invoices.filter(i => {
+        const dateObj = new Date(i.date);
+        const matchesSearch =
+          i.name.toLowerCase().includes(query) ||
+          i.invoice_no.toString().includes(query) ||
+          i.description.toLowerCase().includes(query);
+
+        const matchesYear = year ? dateObj.getFullYear().toString() === year : true;
+        const matchesMonth = month ? (dateObj.getMonth() + 1).toString().padStart(2, '0') === month : true;
+
+        return matchesSearch && matchesYear && matchesMonth;
+      });
+
+      currentPage = 1;
+      renderTable();
+    }
+
+    function renderTable() {
+      const start = (currentPage - 1) * rowsPerPage;
+      const paginated = filteredInvoices.slice(start, start + rowsPerPage);
+
+      if (!paginated.length) {
+        tableBody.innerHTML = `<tr><td colspan="7" class="no-data">No invoices found</td></tr>`;
+        pageInfo.textContent = '';
+        return;
+      }
+
+      tableBody.innerHTML = paginated.map(row => `
+        <tr>
+          <td>${row.invoice_no}</td>
+          <td>${row.name}</td>
+          <td>${row.address}</td>
+          <td>${row.description}</td>
+          <td>${row.tax_rate}%</td>
+          <td>${row.total_value}</td>
+          <td>${row.date}</td>
+        </tr>
+      `).join('');
+
+      const totalPages = Math.ceil(filteredInvoices.length / rowsPerPage);
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    }
+
+    function nextPage() {
+      if ((currentPage * rowsPerPage) < filteredInvoices.length) {
+        currentPage++;
+        renderTable();
+      }
+    }
+
+    function downloadCSV() {
+      if (!filteredInvoices.length) return alert("No data to download.");
+
+      const headers = ["Invoice No", "Name", "Address", "Description", "Tax %", "Total", "Date"];
+      const rows = filteredInvoices.map(r => [
+        r.invoice_no,
+        r.name,
+        r.address,
+        r.description,
+        `${r.tax_rate}%`,
+        r.total_value,
+        r.date
+      ]);
+
+      const csvContent = [headers, ...rows].map(e => e.map(value => `"${value}"`).join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "invoice-history.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    filterYear.addEventListener('change', applyFilters);
+    filterMonth.addEventListener('change', applyFilters);
+
+    fetchInvoices();
+  </script>
+</body>
+</html>
