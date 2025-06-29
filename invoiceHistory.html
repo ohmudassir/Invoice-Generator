@@ -7,44 +7,153 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
-      font-family: Arial, sans-serif; padding: 20px; background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f8f8;
     }
+
+    /* Sticky Navbar */
+    .navbar {
+      background-color: #d8232a;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo-text {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .navbar-links {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+      }
+
+      .navbar-links {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 8px;
+        width: 100%;
+      }
+
+      .navbar a {
+        margin-left: 0;
+      }
+    }
+
+    @media print {
+      .navbar {
+        display: none;
+      }
+    }
+
+    /* Main Content */
     h1 {
-      color: #d8232a; text-align: center;
+      color: #d8232a;
+      text-align: center;
+      margin: 24px 16px 16px;
     }
+
     .controls {
-      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+      padding: 0 16px;
     }
+
     .controls select, .controls input {
-      padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
+
     table {
-      width: 100%; border-collapse: collapse; margin-top: 10px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background-color: white;
     }
+
     th, td {
-      border: 1px solid #ccc; padding: 8px; font-size: 14px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
       text-transform: uppercase;
     }
+
     th {
-      background-color: #d8232a; color: white;
+      background-color: #d8232a;
+      color: white;
     }
-    tr:nth-child(even) { background-color: #f2f2f2; }
-    .pagination {
-      margin-top: 20px; display: flex; justify-content: center; gap: 10px;
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
     }
-    .pagination button {
-      padding: 6px 12px; font-size: 14px; cursor: pointer;
-    }
+
     .no-data {
-      text-align: center; color: #888; margin-top: 20px;
+      text-align: center;
+      color: #888;
+      margin-top: 20px;
     }
+
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination button {
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
     .btn-download {
-      background: #d8232a; color: white; border: none; border-radius: 4px;
-      padding: 8px 16px; cursor: pointer; font-size: 14px;
+      background: #d8232a;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
+
+  <!-- Sticky Navbar -->
+  <div class="navbar">
+    <div class="logo-text">HONDA SYSTEM</div>
+    <div class="navbar-links">
+      <a href="index.html">New Invoice</a>
+      <a href="invoiceHistory.html">Invoice History</a>
+    </div>
+  </div>
 
   <h1>Invoice History</h1>
 
@@ -126,7 +235,8 @@
 
       [...years].sort().forEach(y => {
         const opt = document.createElement('option');
-        opt.value = y; opt.textContent = y;
+        opt.value = y;
+        opt.textContent = y;
         filterYear.appendChild(opt);
       });
 
