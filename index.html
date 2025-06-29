@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice - Sadiq Abdullah Honda</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .invoice { width: 210mm; min-height: 297mm; padding: 20mm; margin: auto; border: 1px solid #000; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .logo { color: #d8232a; font-size: 24px; font-weight: bold; }
+    .company-info { text-align: right; font-size: 12px; }
+    .company-info strong { color: #d8232a; }
+    .invoice-title { text-align: center; font-size: 20px; font-weight: bold; color: #d8232a; margin: 10px 0; }
+    label { font-size: 13px; font-weight: bold; }
+    input, textarea { width: 100%; border: none; font-size: 13px; background: none; text-transform: uppercase; }
+    .dotted-input { border-bottom: 1px dotted #000; padding: 4px; }
+    .info-block { margin-bottom: 10px; }
+    .goods-description { border: 1px solid #000; padding: 8px; margin-top: 10px; }
+    .goods-field { margin-bottom: 6px; position: relative; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { border: 1px solid #000; padding: 6px; vertical-align: top; text-align: left; }
+    .bottom-input { width: 100%; border: none; border-bottom: 1px dotted #000; padding: 4px; font-size: 13px; text-transform: uppercase; }
+    .signature-section { display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px; }
+    .signature-box { border-top: 1px solid #000; width: 40%; text-align: center; padding-top: 5px; }
+    .btn { margin-top: 20px; padding: 6px 16px; font-size: 14px; background: #d8232a; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    @media print { .btn { display: none; } }
+  </style>
+</head>
+<body>
+  <!-- Existing invoice layout -->
+  <!-- The body content has already been inserted in the previous step -->
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice - Sadiq Abdullah Honda</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .invoice { width: 210mm; min-height: 297mm; padding: 20mm; margin: auto; border: 1px solid #000; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .logo { color: #d8232a; font-size: 24px; font-weight: bold; }
+    .company-info { text-align: right; font-size: 12px; }
+    .company-info strong { color: #d8232a; }
+    .invoice-title { text-align: center; font-size: 20px; font-weight: bold; color: #d8232a; margin: 10px 0; }
+    label { font-size: 13px; font-weight: bold; }
+    input, textarea { width: 100%; border: none; font-size: 13px; background: none; text-transform: uppercase; }
+    .dotted-input { border-bottom: 1px dotted #000; padding: 4px; }
+    .info-block { margin-bottom: 10px; }
+    .goods-description { border: 1px solid #000; padding: 8px; margin-top: 10px; }
+    .goods-field { margin-bottom: 6px; position: relative; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { border: 1px solid #000; padding: 6px; vertical-align: top; text-align: left; }
+    .bottom-input { width: 100%; border: none; border-bottom: 1px dotted #000; padding: 4px; font-size: 13px; text-transform: uppercase; }
+    .signature-section { display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px; }
+    .signature-box { border-top: 1px solid #000; width: 40%; text-align: center; padding-top: 5px; }
+    .btn { margin-top: 20px; padding: 6px 16px; font-size: 14px; background: #d8232a; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    @media print { .btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="invoice">
+<div class="header">
+<div class="logo">HONDA</div>
+<div class="company-info">
+<strong>Sadiq Abdullah Honda</strong><br />
+Chishtian Road, Bahawal Nagar Ph: 063-2505800<br />
+Cell: 0300-3955921, 0333-6317536<br />
+WhatsApp: 0316-4962527<br />
+Sales Tax Reg No: <strong>32778716514768</strong><br />
+NTN: <strong>5064300</strong>
+</div>
+</div>
+
+<div class="invoice-title">INVOICE</div>
+
+<div class="info-block"><label>Name:</label><input class="dotted-input" type="text" id="name" /></div>
+<div class="info-block"><label>Address:</label><input class="dotted-input" type="text" id="address" /></div>
+<div class="info-block" style="display: flex; justify-content: space-between;">
+<div style="width: 48%;"><label>Date:</label><input class="dotted-input" type="date" id="date" /></div>
+<div style="width: 48%;"><label>Invoice No:</label><input class="dotted-input" type="text" id="invoiceNo" readonly /></div>
+</div>
+
+<div class="goods-description">
+<label>Description of Goods:</label>
+<div class="goods-field">
+Honda Motorcycle:
+<input class="dotted-input" type="text" id="description" list="bikes" />
+<datalist id="bikes">
+<option value="CD 70"><option value="CD 70 Dream"><option value="CG 125"><option value="Pridor"><option value="CG 125S"><option value="CG 125S Gold">
+</datalist>
+</div>
+<div class="goods-field">Engine No: <input class="dotted-input" type="text" /></div>
+<div class="goods-field">Chassis No: <input class="dotted-input" type="text" /></div>
+<div class="goods-field">Model: <input class="dotted-input" type="text" list="models" /></div>
+<datalist id="models"><option value="2024"><option value="2023"><option value="2022"></datalist>
+<div class="goods-field">Color: <input class="dotted-input" type="text" list="colors" /></div>
+<datalist id="colors"><option value="Red"><option value="Black"><option value="Blue"></datalist>
+<div class="goods-field">Registration Letter No: <input class="dotted-input" type="text" /></div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th style="width: 70%">&nbsp;</th>
+<th style="width: 10%">Rate of Sales Tax</th>
+<th style="width: 20%">Value Including Sales Tax</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><strong>TOTAL:</strong></td>
+<td style="display: flex; align-items: center; gap: 4px;">
+<input class="bottom-input" type="number" id="taxRate" value="18" style="flex: 1;" />
+<span style="font-size: 13px;">%</span>
+</td>
+<td><input class="bottom-input" type="number" id="totalValue" /></td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="signature-section">
+<div class="signature-box">Customer Signature</div>
+<div class="signature-box">For Sadiq Abdullah Honda</div>
+</div>
+
+<button class="btn" onclick="window.print();">Print Invoice</button>
+<button class="btn" onclick="clearForm();" style="margin-left: 10px; background-color: #555;">Clear</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+const supabaseUrl = 'https://ggargmldunrnskbnpiaa.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnYXJnbWxkdW5ybnNrYm5waWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExODkzNDcsImV4cCI6MjA2Njc2NTM0N30.eYd4lVe9vMCSbJZJikpUamNO9P3vtvoct3sxM3ithbo'; // Replace with your actual anon key
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+const bikePrices = {
+'CD 70': 157900,
+'CD 70 DREAM': 168900,
+'CG 125': 234900,
+'PRIDOR': 208900,
+'CG 125S': 282900,
+'CG 125S GOLD': 292900
+};
+
+document.getElementById('date').valueAsDate = new Date();
+
+async function generateInvoiceNumber() {
+const { data } = await client.from('invoices').select('invoice_no').order('invoice_no', { ascending: false }).limit(1);
+const next = data?.[0]?.invoice_no ? parseInt(data[0].invoice_no) + 1 : 3500;
+document.getElementById('invoiceNo').value = next;
+}
+
+generateInvoiceNumber();
+
+document.getElementById('description').addEventListener('input', function () {
+const bike = this.value.trim().toUpperCase();
+if (bikePrices[bike]) {
+document.getElementById('totalValue').value = bikePrices[bike].toFixed(2);
+}
+});
+
+async function saveToSupabase() {
+const invoice_no = document.getElementById('invoiceNo').value;
+const name = document.getElementById('name').value;
+const address = document.getElementById('address').value;
+const description = document.getElementById('description').value;
+const tax_rate = parseFloat(document.getElementById('taxRate').value);
+const total_value = parseFloat(document.getElementById('totalValue').value);
+const date = document.getElementById('date').value;
+
+const { error } = await client.from('invoices').insert([{ invoice_no, name, address, description, tax_rate, total_value, date }]);
+
+if (error) alert('❌ Error saving invoice: ' + error.message);
+else console.log('✅ Saved');
+}
+
+window.onbeforeprint = function () {
+saveToSupabase();
+};
+
+window.onafterprint = function () {
+generateInvoiceNumber();
+};
+
+window.clearForm = function () {
+document.querySelectorAll('input[type=\"text\"], input[type=\"number\"]').forEach(el => el.value = '');
+document.getElementById('date').valueAsDate = new Date();
+document.getElementById('taxRate').value = 18;
+document.getElementById('totalValue').value = '';
+generateInvoiceNumber();
+}
+});
+</script>
+
+</body>
+</html>
