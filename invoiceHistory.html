@@ -6,41 +6,52 @@
   <title>Invoice History - Sadiq Abdullah Honda</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f8f8f8;
+    :root {
+      --red: #d8232a;
+      --font: Arial, sans-serif;
     }
 
-    /* Sticky Navbar */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      margin: 0;
+      padding: 0;
+      background: #f2f2f2;
+    }
+
     .navbar {
-      background-color: #d8232a;
+      position: sticky;
+      top: 5px;
+      background: var(--red);
       color: white;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
-      position: sticky;
-      top: 0;
       z-index: 1000;
+      border-radius: 20px;
+      margin: 0 20px;
     }
 
-    .navbar .logo-text {
+    .navbar h2, .logo-text {
+      margin: 0;
       font-size: 18px;
-      font-weight: bold;
     }
 
     .navbar a {
       color: white;
       text-decoration: none;
       margin-left: 20px;
-      font-weight: bold;
       font-size: 14px;
     }
 
-    .navbar-links {
-      display: flex;
-      flex-wrap: wrap;
+    .navbar a:hover {
+      border: 2px solid white;
+      padding: 4px 8px;
+      border-radius: 10px;
     }
 
     @media (max-width: 600px) {
@@ -68,9 +79,8 @@
       }
     }
 
-    /* Main Content */
     h1 {
-      color: #d8232a;
+      color: var(--red);
       text-align: center;
       margin: 24px 16px 16px;
     }
@@ -96,6 +106,7 @@
       border-collapse: collapse;
       margin-top: 10px;
       background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     th, td {
@@ -106,7 +117,7 @@
     }
 
     th {
-      background-color: #d8232a;
+      background-color: var(--red);
       color: white;
     }
 
@@ -131,10 +142,19 @@
       padding: 6px 12px;
       font-size: 14px;
       cursor: pointer;
+      background-color: var(--red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .pagination button:hover {
+      background-color: #b71c1c;
     }
 
     .btn-download {
-      background: #d8232a;
+      background: var(--red);
       color: white;
       border: none;
       border-radius: 4px;
@@ -146,7 +166,6 @@
 </head>
 <body>
 
-  <!-- Sticky Navbar -->
   <div class="navbar">
     <div class="logo-text">HONDA SYSTEM</div>
     <div class="navbar-links">
@@ -159,12 +178,8 @@
 
   <div class="controls">
     <input type="text" id="search" placeholder="Search name, invoice no, or bike..." />
-    <select id="filterYear">
-      <option value="">All Years</option>
-    </select>
-    <select id="filterMonth">
-      <option value="">All Months</option>
-    </select>
+    <select id="filterYear"><option value="">All Years</option></select>
+    <select id="filterMonth"><option value="">All Months</option></select>
     <button class="btn-download" onclick="downloadCSV()">⬇ Download CSV</button>
   </div>
 
@@ -173,6 +188,10 @@
       <tr>
         <th>Invoice No</th>
         <th>Name</th>
+        <th>Chassis</th>
+        <th>Engine</th>
+        <th>Model</th>
+        <th>Color</th>
         <th>Address</th>
         <th>Description</th>
         <th>Tax %</th>
@@ -181,7 +200,7 @@
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="7" class="no-data">Loading...</td></tr>
+      <tr><td colspan="11" class="no-data">Loading...</td></tr>
     </tbody>
   </table>
 
@@ -215,7 +234,7 @@
         .order('invoice_no', { ascending: false });
 
       if (error) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="no-data">❌ Error loading data</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="11" class="no-data">❌ Error loading data</td></tr>`;
         return;
       }
 
@@ -256,9 +275,9 @@
       filteredInvoices = invoices.filter(i => {
         const dateObj = new Date(i.date);
         const matchesSearch =
-          i.name.toLowerCase().includes(query) ||
-          i.invoice_no.toString().includes(query) ||
-          i.description.toLowerCase().includes(query);
+          i.name?.toLowerCase().includes(query) ||
+          i.invoice_no?.toString().includes(query) ||
+          i.description?.toLowerCase().includes(query);
 
         const matchesYear = year ? dateObj.getFullYear().toString() === year : true;
         const matchesMonth = month ? (dateObj.getMonth() + 1).toString().padStart(2, '0') === month : true;
@@ -275,7 +294,7 @@
       const paginated = filteredInvoices.slice(start, start + rowsPerPage);
 
       if (!paginated.length) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="no-data">No invoices found</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="11" class="no-data">No invoices found</td></tr>`;
         pageInfo.textContent = '';
         return;
       }
@@ -284,6 +303,10 @@
         <tr>
           <td>${row.invoice_no}</td>
           <td>${row.name}</td>
+          <td>${row.chassis_no || '-'}</td>
+          <td>${row.engine_no || '-'}</td>
+          <td>${row.model || '-'}</td>
+          <td>${row.color || '-'}</td>
           <td>${row.address}</td>
           <td>${row.description}</td>
           <td>${row.tax_rate}%</td>
@@ -313,10 +336,18 @@
     function downloadCSV() {
       if (!filteredInvoices.length) return alert("No data to download.");
 
-      const headers = ["Invoice No", "Name", "Address", "Description", "Tax %", "Total", "Date"];
+      const headers = [
+        "Invoice No", "Name", "Chassis", "Engine", "Model", "Color",
+        "Address", "Description", "Tax %", "Total", "Date"
+      ];
+
       const rows = filteredInvoices.map(r => [
         r.invoice_no,
         r.name,
+        r.chassis_no || '',
+        r.engine_no || '',
+        r.model || '',
+        r.color || '',
         r.address,
         r.description,
         `${r.tax_rate}%`,
