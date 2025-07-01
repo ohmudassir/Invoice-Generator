@@ -276,11 +276,11 @@
           <option value="CD 70"><option value="CD 70 Dream"><option value="CG 125"><option value="Pridor"><option value="CG 125S"><option value="CG 125S Gold">
         </datalist>
       </div>
-      <div class="goods-field">Engine No: <input class="dotted-input" type="text" /></div>
-      <div class="goods-field">Chassis No: <input class="dotted-input" type="text" /></div>
-      <div class="goods-field">Model: <input class="dotted-input" type="text" list="models" /></div>
+      <div class="goods-field">Engine No: <input class="dotted-input" type="text" id="engine" /></div>
+      <div class="goods-field">Chassis No: <input class="dotted-input" type="text" id="chassis" /></div>
+      <div class="goods-field">Model: <input class="dotted-input" type="text" list="models" id="model" /></div>
       <datalist id="models"><option value="2025"></option><option value="2024"><option value="2023"><option value="2022"></datalist>
-      <div class="goods-field">Color: <input class="dotted-input" type="text" list="colors" /></div>
+      <div class="goods-field">Color: <input class="dotted-input" type="text" list="colors" id="color" /></div>
       <datalist id="colors"><option value="Red"><option value="Black"><option value="Blue"></datalist>
       <div class="goods-field">Registration Letter No: <input class="dotted-input" type="text" /></div>
     </div>
@@ -352,14 +352,30 @@
         const name = document.getElementById('name').value;
         const address = document.getElementById('address').value;
         const description = document.getElementById('description').value;
+        const engine = document.getElementById('engine').value;
+        const chassis = document.getElementById('chassis').value;
+        const model = document.getElementById('model').value;
+        const color = document.getElementById('color').value;
         const tax_rate = parseFloat(document.getElementById('taxRate').value);
         const total_value = parseFloat(document.getElementById('totalValue').value);
         const date = document.getElementById('date').value;
 
-        const { error } = await supabase.from('invoices').insert([{ invoice_no, name, address, description, tax_rate, total_value, date }]);
+        const { error } = await supabase.from('invoices').insert([{
+          invoice_no,
+          name,
+          address,
+          description,
+          engine,
+          chassis,
+          model,
+          color,
+          tax_rate,
+          total_value,
+          date
+        }]);
 
         if (error) alert('❌ Error saving invoice: ' + error.message);
-        else console.log('✅ Saved');
+        else console.log('✅ Invoice saved to Supabase');
       }
 
       window.onbeforeprint = function () {
